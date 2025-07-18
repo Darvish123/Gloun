@@ -1,0 +1,38 @@
+name: Auto News Update
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # ⏰ اجرای هر ساعت (UTC)
+  workflow_dispatch:     # اجرای دستی در GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt || true
+        pip install requests beautifulsoup4
+
+    - name: Run scraper
+      run: python3 scraper.py
+
+    - name: Generate posts
+      run: python3 generate_posts.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "Darvish123"
+        git config --global user.email "Alonealihaider@gmail.com"
+        git add _posts/
+        git commit -m "⏰ Hourly auto update" || echo "No changes to commit"
+        git push
