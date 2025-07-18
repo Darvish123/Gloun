@@ -3,7 +3,7 @@ name: Auto News Update
 on:
   schedule:
     - cron: '0 * * * *'  # اجرای هر ساعت
-  workflow_dispatch:     # اجرا دستی
+  workflow_dispatch: {}
 
 jobs:
   build:
@@ -35,4 +35,4 @@ jobs:
           git config --global user.email "Alonelahiahdar@gmail.com"
           git add _posts/
           git commit -m "🤖 Hourly auto update" || echo "No changes to commit"
-          git push https://Darvish123:${{ secrets.GLOUN }}@github.com/Darvish123/Gloun.git
+          git push "https://Darvish123:${{ secrets.GLOUN }}@github.com/Darvish123/Gloun.git"
