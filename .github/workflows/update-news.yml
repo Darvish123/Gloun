@@ -1,7 +1,7 @@
 - name: Commit and push changes
       run: |
         git config --global user.name "Darvish123"
-        git config --global user.email "Alonealihader@gmail.com"
+        git config --global user.email "Alonealihaiader@gmail.com"
         git add _posts/
-        git commit -m "⏰ Hourly auto update" || echo "No changes to commit"
-        git push https://Darvish123:${{ secrets.GH_TOKEN }}@github.com/Darvish123/Gloun.git HEAD:main
+        git commit -m "🕓 Hourly auto update" || echo "No changes to commit"
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
