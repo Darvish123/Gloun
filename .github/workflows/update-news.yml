@@ -2,8 +2,8 @@ name: Auto News Update
 
 on:
   schedule:
-    - cron: '0 * * * *'  # ⏰ اجرای هر ساعت (UTC)
-  workflow_dispatch:     # اجرای دستی در GitHub
+    - cron: '0 * * * *'  # اجرای هر ساعت
+  workflow_dispatch:      # امکان اجرای دستی
 
 jobs:
   build:
@@ -16,23 +16,25 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt || true
-        pip install requests beautifulsoup4
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: Run scraper
-      run: python3 scraper.py
+      run: python scraper.py
 
     - name: Generate posts
-      run: python3 generate_posts.py
+      run: python generate_posts.py
 
     - name: Commit and push changes
       run: |
-        git config --global user.name "Darvish123"
-        git config --global user.email "Alonealihaider@gmail.com"
-        git add _posts/
-        git commit -m "⏰ Hourly auto update" || echo "No changes to commit"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "🤖 Auto update news posts"
         git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
