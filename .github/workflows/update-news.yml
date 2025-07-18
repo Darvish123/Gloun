@@ -1,5 +1,5 @@
 - name: Commit and push changes
-      run: |
+      run: 
         git config --global user.name "Darvish123"
         git config --global user.email "Alonealihaiader@gmail.com"
         git add _posts/
