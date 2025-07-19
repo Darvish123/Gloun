@@ -1,4 +1,3 @@
-
 import json
 import os
 from datetime import datetime
@@ -14,11 +13,18 @@ with open(json_path, 'r', encoding='utf-8') as f:
 def slugify(title):
     return re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
 
+existing_titles = set()
+
 for item in news_items:
     try:
+        title = item['title'].strip()
+        if title in existing_titles:
+            continue
+        existing_titles.add(title)
+
         dt = datetime.fromisoformat(item['date'].replace('Z', '+00:00'))
         date_str = dt.strftime('%Y-%m-%d')
-        slug = slugify(item['title'])[:50]
+        slug = slugify(title)[:50]
         filename = f"{date_str}-{slug}.md"
         filepath = os.path.join(posts_dir, filename)
 
@@ -27,7 +33,7 @@ for item in news_items:
 
         front_matter = f"""---
 layout: post
-title: "{item['title']}"
+title: "{title}"
 date: {dt.isoformat()}
 categories: [news]
 tags: {item['tags'] + item['hashtags']}

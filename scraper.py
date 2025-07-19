@@ -1,9 +1,8 @@
-
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timezone
-import json
+from datetime import datetime
 import re
+import json
 from urllib.parse import urljoin
 
 DATA_FILE = 'data.json'
@@ -30,113 +29,41 @@ def scrape_cnbc():
             continue
 
         title = a_tag.get_text(strip=True)
-        link = a_tag['href']
-        if not link.startswith('http'):
-            link = urljoin('https://www.cnbc.com', link)
+        link = urljoin(url, a_tag['href'])
+        
+        # ورود به لینک خبر
+        article_res = requests.get(link, headers=headers)
+        article_soup = BeautifulSoup(article_res.content, 'html.parser')
+        
+        # متن خبر
+        content_div = article_soup.select_one('div.ArticleBody-articleBody')
+        body_text = content_div.get_text(strip=True) if content_div else ''
+        
+        # عکس خبر
+        img_tag = article_soup.find('meta', property='og:image')
+        image_url = img_tag['content'] if img_tag else ''
+        
+        # دسته‌بندی خبر
+        category_tag = article_soup.find('meta', property='article:section')
+        category = category_tag['content'] if category_tag else 'Uncategorized'
 
-        try:
-            article_res = requests.get(link, headers=headers)
-            article_soup = BeautifulSoup(article_res.content, 'html.parser')
-            paragraphs = article_soup.select('div.ArticleBody-articleBody p')
-            body = '\n'.join([p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 40])
-            img_tag = article_soup.find('meta', property='og:image')
-            image = img_tag['content'] if img_tag else ''
-            hashtags = generate_hashtags(title + ' ' + body)
-            results.append({
-                'title': title,
-                'link': link,
-                'body': body,
-                'image': image,
-                'hashtags': hashtags,
-                'tags': ['economy'],
-                'source': 'CNBC',
-                'date': datetime.now(timezone.utc).isoformat()
-            })
-        except:
-            continue
+        results.append({
+            'title': title,
+            'link': link,
+            'body': body_text,
+            'image': image_url,
+            'category': category,
+            'hashtags': generate_hashtags(title + ' ' + body_text)
+        })
+
     return results
 
-def scrape_reuters():
-    url = 'https://www.reuters.com/business/'
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    res = requests.get(url, headers=headers)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    articles = soup.select('article.story')
-    results = []
+def save_data(data):
+    with open(DATA_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
 
-    for article in articles[:5]:
-        a_tag = article.find('a')
-        if not a_tag or not a_tag.get('href'):
-            continue
+if __name__ == "__main__":
+    news = scrape_cnbc()
+    save_data(news)
+    print(f"{len(news)} خبر ذخیره شد.")
 
-        link = 'https://www.reuters.com' + a_tag['href']
-        title = a_tag.get_text(strip=True)
-
-        try:
-            article_res = requests.get(link, headers=headers)
-            article_soup = BeautifulSoup(article_res.content, 'html.parser')
-            paragraphs = article_soup.select('div.article-body__content__17Yit p')
-            body = '\n'.join([p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 40])
-            img_tag = article_soup.find('meta', property='og:image')
-            image = img_tag['content'] if img_tag else ''
-            hashtags = generate_hashtags(title + ' ' + body)
-            results.append({
-                'title': title,
-                'link': link,
-                'body': body,
-                'image': image,
-                'hashtags': hashtags,
-                'tags': ['business'],
-                'source': 'Reuters',
-                'date': datetime.now(timezone.utc).isoformat()
-            })
-        except:
-            continue
-    return results
-
-def scrape_marketwatch():
-    url = 'https://www.marketwatch.com/economy-politics'
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    res = requests.get(url, headers=headers)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    articles = soup.select('div.article__content')
-    results = []
-
-    for article in articles[:5]:
-        a_tag = article.find('a')
-        if not a_tag:
-            continue
-
-        link = a_tag['href']
-        title = a_tag.get_text(strip=True)
-
-        try:
-            article_res = requests.get(link, headers=headers)
-            article_soup = BeautifulSoup(article_res.content, 'html.parser')
-            paragraphs = article_soup.select('div.article__body p')
-            body = '\n'.join([p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 40])
-            img_tag = article_soup.find('meta', property='og:image')
-            image = img_tag['content'] if img_tag else ''
-            hashtags = generate_hashtags(title + ' ' + body)
-            results.append({
-                'title': title,
-                'link': link,
-                'body': body,
-                'image': image,
-                'hashtags': hashtags,
-                'tags': ['politics', 'economy'],
-                'source': 'MarketWatch',
-                'date': datetime.now(timezone.utc).isoformat()
-            })
-        except:
-            continue
-    return results
-
-def run_all():
-    all_news = scrape_cnbc() + scrape_reuters() + scrape_marketwatch()
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(all_news, f, indent=2, ensure_ascii=False)
-    print(f"✅ Done. {len(all_news)} news items saved to {DATA_FILE}")
-
-if __name__ == '__main__':
-    run_all()
