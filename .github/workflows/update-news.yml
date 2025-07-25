@@ -1,9 +1,36 @@
-- name: Commit and push changes
-  env:
-    GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  run: |
-    git config user.name "github-actions"
-    git config user.email "github-actions@github.com"
-    git add _posts
-    git commit -m "🔄 Auto update posts" || echo "No changes to commit"
-    git push https://x-access-token:${GH_TOKEN}@github.com/Darvish123/Gloun.git HEAD:main
+name: Auto Scrape and Push News
+
+on:
+  schedule:
+    - cron: "0 * * * *" # هر ساعت یکبار اجرا می‌شود
+  workflow_dispatch:    # امکان اجرای دستی از پنل Actions
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🚀 Run scraper
+        run: node guardian-stealth-autopush.js
+
+      - name: ✅ Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add _posts
+          git commit -m "✅ Auto update posts" || echo "No changes to commit"
+          git push https://x-access-token:${GH_TOKEN}@github.com/Darvish123/Gloun.git HEAD:main
