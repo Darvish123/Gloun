@@ -1,0 +1,26 @@
+{
+  "name": "gloun",
+  "version": "1.0.0",
+  "description": "[Live Demo](https://wowthemesnet.github.io/mediumish-theme-jekyll/) &nbsp; | &nbsp; [Download](https://github.com/wowthemesnet/mediumish-theme-jekyll/archive/master.zip) &nbsp; | &nbsp; [Documentation](https://bootstrapstarter.com/template-mediumish-bootstrap-jekyll/) &nbsp; | &nbsp; [Buy me a coffee](https://www.wowthemes.net/donate/)",
+  "main": "guardian-stealth-autopush.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/Darvish123/Gloun.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Darvish123/Gloun/issues"
+  },
+  "homepage": "https://github.com/Darvish123/Gloun#readme",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "cheerio": "^1.1.2",
+    "dotenv": "^17.2.1",
+    "puppeteer": "^24.15.0"
+  }
+}
