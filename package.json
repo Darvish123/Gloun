@@ -1,26 +1,17 @@
 {
-  "name": "gloun",
+  "name": "gloun-news-scraper",
   "version": "1.0.0",
-  "description": "[Live Demo](https://wowthemesnet.github.io/mediumish-theme-jekyll/) &nbsp; | &nbsp; [Download](https://github.com/wowthemesnet/mediumish-theme-jekyll/archive/master.zip) &nbsp; | &nbsp; [Documentation](https://bootstrapstarter.com/template-mediumish-bootstrap-jekyll/) &nbsp; | &nbsp; [Buy me a coffee](https://www.wowthemes.net/donate/)",
+  "description": "Automated scraping and news update bot for Gloun blog",
   "main": "guardian-stealth-autopush.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node guardian-stealth-autopush.js",
+    "convert": "node convert_to_articles.js"
   },
-  "repository": {
-    "url": "git+https://github.com/Darvish123/Gloun.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Darvish123/Gloun/issues"
-  },
-  "homepage": "https://github.com/Darvish123/Gloun#readme",
+  "author": "Darvish123",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^1.11.0",
-    "cheerio": "^1.1.2",
-    "dotenv": "^17.2.1",
-    "playwright": "^1.43.1",
-    "puppeteer": "^24.15.0"
+    "cheerio": "1.0.0-rc.12",
+    "undici": "5.26.5",
+    "playwright": "^1.44.0"
   }
 }
